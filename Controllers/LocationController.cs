@@ -9,15 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace WeatherApiWorkshop.Controllers
 {
-    [ApiController]
-    [Route("api/v1/[controller]")]
-    public class LocationController : Controller
-    {
-        private readonly AppDbContext _db;
-        public LocationController(AppDbContext db)
-        {
-            _db = db;
-        }
+	[ApiController]
+	[Route("api/v1/[controller]")]
+	public class LocationController : Controller
+	{
+		private readonly AppDbContext _db;
+		public LocationController(AppDbContext db)
+		{
+			_db = db;
+		}
 
         [HttpGet]
         public async Task<IActionResult> GetCityByName([FromQuery] string? city)
@@ -36,5 +36,18 @@ namespace WeatherApiWorkshop.Controllers
             return Ok(getCity);
         }
 
-    }
+		[HttpPost]
+		public async Task<IActionResult> PostLocation(Location l)
+		{
+			var locationExists = await _db.Locations.AnyAsync(location => location.City.ToLower() == l.City.ToLower());
+
+			if (locationExists)
+				return Problem("Location already exists in database.", statusCode: 409);
+
+			await _db.Locations.AddAsync(l);
+			_db.SaveChanges();
+
+			return Created("api/v1/location", l);
+		}
+	}
 }
