@@ -18,6 +18,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddControllers();
+
+
 var app = builder.Build();
 
 // Denna hör ihop med CORS-inställningen ovan
