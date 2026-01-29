@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://*:5171");
 
 // Lägg till den DbContext ni skapar för er databas här
 // builder.Services.AddDbContext<ApiDbContext>(options =>
