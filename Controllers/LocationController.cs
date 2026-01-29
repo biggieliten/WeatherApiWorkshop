@@ -19,38 +19,39 @@ namespace WeatherApiWorkshop.Controllers
 			_db = db;
 		}
 
-        [HttpGet]
-        public async Task<IActionResult> GetCityByName([FromQuery] string? city)
-        {
-            if (city == "all")
-            {
-                var locations = await _db.Locations.ToListAsync();
-                return Ok(locations);
-            }
+		[HttpGet]
+		public async Task<IActionResult> GetCityByName([FromQuery] string? city)
+		{
+			if (city == "all")
+			{
+				var locations = await _db.Locations.ToListAsync();
+				return Ok(locations);
+			}
 
-            var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
-            if (getCity == null)
-            {
-                return NotFound();
-            }
-            return Ok(getCity);
-        }
-        [HttpDelete("delete/{city}")]
-        public async Task<IActionResult> DeleteLocation(string city)
-        {
-            var locationToDelete = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
+			var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
+			if (getCity == null)
+			{
+				return NotFound();
+			}
+			return Ok(getCity);
+		}
 
-            if (locationToDelete == null)
-            {
-                return NotFound("Location not found, try again.");
-            }
+		[HttpDelete("delete/{city}")]
+		public async Task<IActionResult> DeleteLocation(string city)
+		{
+			var locationToDelete = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
 
-            _db.Locations.Remove(locationToDelete);
+			if (locationToDelete == null)
+			{
+				return NotFound("Location not found, try again.");
+			}
 
-            await _db.SaveChangesAsync();
+			_db.Locations.Remove(locationToDelete);
 
-            return Ok($"Location {locationToDelete.City} successfully deleted.");
-        }
+			await _db.SaveChangesAsync();
+
+			return Ok($"Location {locationToDelete.City} successfully deleted.");
+		}
 
 		[HttpPost]
 		public async Task<IActionResult> PostLocation(Location l)
@@ -61,7 +62,7 @@ namespace WeatherApiWorkshop.Controllers
 				return Problem("Location already exists in database.", statusCode: 409);
 
 			await _db.Locations.AddAsync(l);
-			_db.SaveChanges();
+			await _db.SaveChangesAsync();
 
 			return Created("api/v1/location", l);
 		}
