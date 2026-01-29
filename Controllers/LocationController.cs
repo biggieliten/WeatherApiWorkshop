@@ -9,31 +9,25 @@ using Microsoft.Extensions.Logging;
 
 namespace WeatherApiWorkshop.Controllers
 {
-    [ApiController]
-    [Route("api/v1/[controller]")]
-    public class LocationController : Controller
-    {
-        private readonly AppDbContext _db;
-        public LocationController(AppDbContext db)
-        {
-            _db = db;
-        }
+	[ApiController]
+	[Route("api/v1/[controller]")]
+	public class LocationController : Controller
+	{
+		private readonly AppDbContext _db;
+		public LocationController(AppDbContext db)
+		{
+			_db = db;
+		}
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCities()
+        public async Task<IActionResult> GetCityByName([FromQuery] string? city)
         {
-            var locations = await _db.Locations.ToListAsync();
-
-            if (locations.Count == 0)
+            if (city == "all")
             {
-                return NotFound();
+                var locations = await _db.Locations.ToListAsync();
+                return Ok(locations);
             }
-            return Ok(locations);
-        }
 
-        [HttpGet("{city}")]
-        public async Task<IActionResult> GetCityByName(string city)
-        {
             var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
             if (getCity == null)
             {
@@ -58,5 +52,18 @@ namespace WeatherApiWorkshop.Controllers
             return Ok($"Location {locationToDelete.City} successfully deleted.");
         }
 
-    }
+		[HttpPost]
+		public async Task<IActionResult> PostLocation(Location l)
+		{
+			var locationExists = await _db.Locations.AnyAsync(location => location.City.ToLower() == l.City.ToLower());
+
+			if (locationExists)
+				return Problem("Location already exists in database.", statusCode: 409);
+
+			await _db.Locations.AddAsync(l);
+			_db.SaveChanges();
+
+			return Created("api/v1/location", l);
+		}
+	}
 }
