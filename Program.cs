@@ -19,6 +19,10 @@ builder.Services.AddCors(options =>
 	});
 });
 
+builder.Services.AddControllers();
+
+builder.Services.AddControllers();
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data source=database.db"));
 
 var app = builder.Build();
@@ -33,6 +37,6 @@ db.Database.EnsureCreated();
 app.UseCors();
 
 //Ni ska inte skriva era endpoints här i Program.cs utan i separata controllers, så använd denna:
-// app.MapControllers();
+app.MapControllers();
 
 app.Run();
