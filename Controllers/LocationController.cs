@@ -24,7 +24,7 @@ namespace WeatherApiWorkshop.Controllers
         {
             if (city == null)
             {
-                return NoContent();
+                return BadRequest("City parameter is required. Use ?city=cityName or ?city=all");
             }
             if (city == "all")
             {
