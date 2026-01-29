@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,18 +11,25 @@ var builder = WebApplication.CreateBuilder(args);
 // Läs mer här: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+	options.AddDefaultPolicy(policy =>
+	{
+		policy.AllowAnyOrigin()
+			  .AllowAnyMethod()
+			  .AllowAnyHeader();
+	});
 });
 
 builder.Services.AddControllers();
 
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Source Data=database.db"));
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+
+var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+// db.Database.EnsureDeleted();
+db.Database.EnsureCreated();
 
 // Denna hör ihop med CORS-inställningen ovan
 app.UseCors();
