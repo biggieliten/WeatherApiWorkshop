@@ -22,6 +22,10 @@ namespace WeatherApiWorkshop.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCityByName([FromQuery] string? city)
         {
+            if (city == null)
+            {
+                return NoContent();
+            }
             if (city == "all")
             {
                 var locations = await _db.Locations.ToListAsync();
