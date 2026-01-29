@@ -28,6 +28,13 @@ namespace WeatherApiWorkshop.Controllers
         {
             return Ok(cities);
         }
+        
+        [HttpGet("/{city}")]
+        public IActionResult Index(string city)
+        {
+            var getCity = cities.Find(c => c.City.ToLower() == city.ToLower());
+            return Ok(getCity);
+        }
 
     }
 }
