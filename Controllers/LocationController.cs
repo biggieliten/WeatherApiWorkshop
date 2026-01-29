@@ -35,6 +35,22 @@ namespace WeatherApiWorkshop.Controllers
             }
             return Ok(getCity);
         }
+        [HttpDelete("delete/{city}")]
+        public async Task<IActionResult> DeleteLocation(string city)
+        {
+            var locationToDelete = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
+
+            if (locationToDelete == null)
+            {
+                return NotFound("Location not found, try again.");
+            }
+
+            _db.Locations.Remove(locationToDelete);
+
+            await _db.SaveChangesAsync();
+
+            return Ok($"Location {locationToDelete.City} successfully deleted.");
+        }
 
 		[HttpPost]
 		public async Task<IActionResult> PostLocation(Location l)
