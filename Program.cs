@@ -31,6 +31,8 @@ var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 // db.Database.EnsureDeleted();
 db.Database.EnsureCreated();
 
+SeedDatabase(db);
+
 // Denna hör ihop med CORS-inställningen ovan
 app.UseCors();
 
@@ -38,3 +40,28 @@ app.UseCors();
 app.MapControllers();
 
 app.Run();
+
+void SeedDatabase(AppDbContext context)
+{
+	if (context.Locations.Any()) return;
+
+	var csvPath = "locations.csv";
+
+	var locations = File.ReadAllLines(csvPath)
+		.Select(line =>
+		{
+			var parts = line.Split(',');
+			return new Location
+			{
+				City = parts[0].Trim(),
+				Latitude = parts[1].Trim(),
+				Longitude = parts[2].Trim(),
+				Country = parts[3].Trim(),
+				Region = parts[4].Trim()
+			};
+		})
+		.ToList();
+
+	context.Locations.AddRange(locations);
+	context.SaveChanges();
+}

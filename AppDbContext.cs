@@ -6,5 +6,5 @@ public class AppDbContext : DbContext
 	{
 	}
 
-	DbSet<Location> Locations => Set<Location>();
+	public DbSet<Location> Locations => Set<Location>();
 }
