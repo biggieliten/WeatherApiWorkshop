@@ -19,16 +19,22 @@ namespace WeatherApiWorkshop.Controllers
 			_db = db;
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> GetCityByName([FromQuery] string? city)
-		{
-			var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
-			if (getCity == null)
-			{
-				return NotFound();
-			}
-			return Ok(getCity);
-		}
+        [HttpGet]
+        public async Task<IActionResult> GetCityByName([FromQuery] string? city)
+        {
+            if (city == "all")
+            {
+                var locations = await _db.Locations.ToListAsync();
+                return Ok(locations);
+            }
+
+            var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
+            if (getCity == null)
+            {
+                return NotFound();
+            }
+            return Ok(getCity);
+        }
 
 		[HttpPost]
 		public async Task<IActionResult> PostLocation(Location l)
