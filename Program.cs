@@ -21,8 +21,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddControllers();
-
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data source=database.db"));
 
 var app = builder.Build();
