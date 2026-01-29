@@ -20,19 +20,7 @@ namespace WeatherApiWorkshop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCities()
-        {
-            var locations = await _db.Locations.ToListAsync();
-
-            if (locations.Count == 0)
-            {
-                return NotFound();
-            }
-            return Ok(locations);
-        }
-
-        [HttpGet("{city}")]
-        public async Task<IActionResult> GetCityByName(string city)
+        public async Task<IActionResult> GetCityByName([FromQuery] string? city)
         {
             var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
             if (getCity == null)
