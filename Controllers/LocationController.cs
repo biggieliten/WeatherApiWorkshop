@@ -22,17 +22,20 @@ namespace WeatherApiWorkshop.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCityByName([FromQuery] string? city)
         {
+            var allCities = await _db.Locations.ToListAsync();
+			var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower().Contains(city.ToLower()));
+
             if (city == null)
             {
                 return BadRequest("City parameter is required. Use ?city=cityName or ?city=all");
             }
+
             if (city == "all")
             {
                 var locations = await _db.Locations.ToListAsync();
                 return Ok(locations);
             }
 
-			var getCity = await _db.Locations.FirstOrDefaultAsync(c => c.City.ToLower() == city.ToLower());
 			if (getCity == null)
 			{
 				return NotFound();
